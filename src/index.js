@@ -8,7 +8,9 @@ const api = require('./api');
 // 비구조화 할당을 통해 process.env 내부 값에 대한 레퍼런스 만들기
 const { PORT, MONGO_URI } = process.env;
 
-mongoose.connect(MONGO_URI).then(() => {
+mongoose
+  .connect(MONGO_URI)
+  .then(() => {
     console.log("connected to mongodb");
 }).catch(e => {
     console.log(e);
