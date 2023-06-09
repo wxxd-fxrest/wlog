@@ -1,4 +1,4 @@
-const checkLoggedIn = (ctx, next) => {
+exports.checkLogged = (ctx, next) => {
     if (!ctx.state.user) {
         ctx.status = 401; // Unauthorized
         return;
@@ -7,7 +7,7 @@ const checkLoggedIn = (ctx, next) => {
 };
     
   
-module.exports = checkLoggedIn;
+// module.exports = checkLoggedIn;
 
 
 // exports.checkObjectId = (ctx, next) => {

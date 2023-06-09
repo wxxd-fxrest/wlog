@@ -1,6 +1,6 @@
 const Post = require('../../models/post.js');
 const { mongoose } = require('mongoose');
-const { Joi } = require('joi');
+const Joi = require('joi');
 
 const {ObjectId} = mongoose.Types; 
 
@@ -66,7 +66,7 @@ exports.write = async ctx => {
 }; 
 
 /*
-    GET /api/posts
+    GET /api/posts?username=&tag=&page=
 */
 exports.list = async ctx => {
     // query 는 문자열이기 때문에 숫자로 변환해 주어야 합니다.
@@ -78,6 +78,13 @@ exports.list = async ctx => {
         return;
     }
 
+    const {tag, username} = ctx.query;
+    // tag, username 값이 유효하면 객체 안에 넣고, 그렇지 않으면 넣지 않음
+    const query = {
+        ...(username ? {'user.username' : username} : {}),
+        ...(tag ? {tags: tag} : {}),
+    };
+
     try {
         const posts = 
             await Post.find()
@@ -85,10 +92,10 @@ exports.list = async ctx => {
                 .limit(10)
                 .skip((page -1) * 10)
                 .exec();
-        const postCount = await Post.countDocuments().exec();
+        const postCount = await Post.countDocuments(query).exec();
         ctx.set('Last-page', Math.ceil(postCount / 10));
         ctx.body = posts
-            .map(post => post.toJSON())
+            // .map(post => post.toJSON())
             .map(post => ({
                 ...post, 
                 body: post.body.length < 200 ? post.body : `${post.body.slice(0, 200)}...`,
